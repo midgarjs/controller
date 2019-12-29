@@ -16,12 +16,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/midgarjs/route-loader.git"
+    "url": "git+https://github.com/midgarjs/controller.git"
   },
   "dependencies": {
     "@midgar/utils": "^1.0.0-alpha.1.5",
     "@midgar/midgar": "^1.0.0-alpha.2.1",
-    "@midgar/service": "^1.0.0-alpha.1.0",
+    "@midgar/service": "^1.0.0-alpha.1.1",
     "htmlencode": "^0.0.4",
     "uid-safe": "^2.1.5"
   },
