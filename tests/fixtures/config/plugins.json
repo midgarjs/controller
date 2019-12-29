@@ -1,0 +1,6 @@
+{ "@midgar/controller": {
+  "enabled": true,
+  "path": "../../.."
+}, 
+"@midgar/service": true,
+"test": true }
