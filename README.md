@@ -10,7 +10,7 @@ Plugin [Midgar](https://www.npmjs.com/package/@midgar/midgar) pour la gestion de
 $ npm i @midgar/controller --save
 ```
 
-Si tout c'est bien passé, un message de confirmation apparet:
+Si tout s'est bien passé, un message de confirmation s'affiche:
 ```
 #midgar-cli
 @midgar/controller added to plugins.js !
