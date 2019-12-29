@@ -1,4 +1,3 @@
-/** @module ControllerPlugin */
 
 import { htmlEncode } from 'htmlencode'
 import { Plugin } from '@midgar/midgar'
@@ -7,15 +6,20 @@ export { default as Controller } from './controller'
 
 export const DIR_KEY = 'midgar-contoller'
 
-function isClass(func) {
-  return typeof func === 'function'
-    && /^class\s/.test(Function.prototype.toString.call(func))
+/**
+ * Test if func is a class
+ * @param {Any} func Arg to test
+ * @private
+ */
+function isClass (func) {
+  return typeof func === 'function' &&
+    /^class\s/.test(Function.prototype.toString.call(func))
 }
 
 /**
  * Midgar Controller plugin
  */
-export default class ControllerPlugin extends Plugin {
+class ControllerPlugin extends Plugin {
   constructor (...args) {
     super(...args)
 
@@ -28,9 +32,9 @@ export default class ControllerPlugin extends Plugin {
 
   /**
    * Init plugins
-   * Define controllers directory and bind event 
+   * Define controllers directory and bind event
    */
-  async init() {
+  async init () {
     // Add controllers plugin dir to plugin manager
     this.pm.addPluginDir(this.dirKey, 'controllers')
 
@@ -93,13 +97,13 @@ export default class ControllerPlugin extends Plugin {
    * Load plugin controller files
    * @private
    */
-  async _loadControllers() {
+  async _loadControllers () {
     /**
      * beforeLoadRoute event.
      * @event @midgar/controller:beforeLoad
      */
     await this.mid.emit('@midgar/controller:beforeLoad')
-    
+
     this.mid.debug('@midgar/controller: Load controllers...')
 
     // Import controller files
@@ -124,34 +128,12 @@ export default class ControllerPlugin extends Plugin {
   }
 
   /**
-   * Load plugins conto files
-   * @private
-   */
-  async _loadPluginControllers() {
-    this.mid.debug('@midgar/controller: Load routes...')
-
-    // Read router plugin files
-    const files = await this.mid.pm.requireFiles(this.dirKey, null, true)
-
-    // List router files
-    await asyncMap(files, async file => {
-      try {
-        await this._loadController(file)
-      } catch (error) {
-        this.mid.error(error)
-      }
-    })
-
-    this.mid.debug('@midgar/controller: Load routes finish.')
-  }
-
-  /**
    * Load controller file and add routes to express
-   * 
+   *
    * @param {Object} controllerFile Object of a file imported with pm.inportDir
    * @private
    */
-  async _loadController(controllerFile) {
+  async _loadController (controllerFile) {
     // Router class
     const controllerExport = controllerFile.export
 
@@ -168,18 +150,16 @@ export default class ControllerPlugin extends Plugin {
 
   /**
    * Load controller Object
-   * 
+   *
    * @param {Object} controllerFile Object of a file imported with pm.inportDir
    * @private
    */
-  async _loadObject(controllerFile) {
+  async _loadObject (controllerFile) {
     // Router class
     const controllerExport = controllerFile.export
     // Check controller def
-    if (controllerExport.controller === undefined) 
-      throw new Error('@midgar/controller: missing controller entry in file: ' + controllerFile.path)
-    if (!isClass(controllerExport.controller))  
-      throw new TypeError('@midgar/controller: invalid controller entry type in file: ' + controllerFile.path)
+    if (controllerExport.controller === undefined) { throw new Error('@midgar/controller: missing controller entry in file: ' + controllerFile.path) }
+    if (!isClass(controllerExport.controller)) { throw new TypeError('@midgar/controller: invalid controller entry type in file: ' + controllerFile.path) }
 
     if (controllerExport.dependencies !== undefined) {
       const args = [this.mid]
@@ -187,7 +167,7 @@ export default class ControllerPlugin extends Plugin {
       if (!Array.isArray(controllerExport.dependencies)) {
         this.mid.warn('@midgar/controller: invalid dependencies entry type in file: ' + controllerFile.path)
       } else if (controllerExport.dependencies.length) {
-        for(const dependency of controllerExport.dependencies) {
+        for (const dependency of controllerExport.dependencies) {
           args.push(this.mid.getService(dependency))
         }
       }
@@ -215,30 +195,29 @@ export default class ControllerPlugin extends Plugin {
 
   /**
    * Add routes to express
-   * 
+   *
    * @param {Array}     routes      Routes definition
    * @param {Controller} controller Controller instance
    * @private
    */
-  async _loadRoutes(routes, controller) {
+  async _loadRoutes (routes, controller) {
     // List routes
     await asyncMap(routes, async route => {
-      if (!route.method)
-        route.method = 'get'
+      if (!route.method) { route.method = 'get' }
 
       // Check route définition
       if (!route.action) {
-        throw new Error('@midgar/controller: route have no action action in ' + routerFile.path + ' !')
+        throw new Error('@midgar/controller: route have no action action in ' + controller.path + ' !')
       }
 
       if (!route.path) {
-        throw new Error('@midgar/controller: route have no action action in ' + routerFile.path + ' !')
+        throw new Error('@midgar/controller: route have no action action in ' + controller.path + ' !')
       }
 
       if (!controller[route.action]) {
-        throw new Error('@midgar/controller: route action (' + route.action +') not exist for route ' + route.path + ' !')
+        throw new Error('@midgar/controller: route action (' + route.action + ') not exist for route ' + route.path + ' !')
       }
-      
+
       // Bind router instance on method
       // controller.action = controller[route.action].bind(controller)
 
@@ -248,12 +227,12 @@ export default class ControllerPlugin extends Plugin {
 
   /**
    * Add route to express
-   * 
+   *
    * @param {Object}     route      Route definition
    * @param {Controller} controller Controller instance
    * @private
    */
-  async _addRoute(route, controller) {
+  async _addRoute (route, controller) {
     let routePath = null
     // If router have prefix had it to the path
     if (controller.prefix) {
@@ -263,7 +242,7 @@ export default class ControllerPlugin extends Plugin {
     }
 
     this.mid.debug('@midgar/controller: add route ' + routePath + '.')
-    // Decalare the route to express 
+    // Decalare the route to express
     // Route.type = get | post ...
     this.mid.app[route.method](routePath, async (req, res, next) => {
       this.mid.debug('@midgar/controller: route ' + routePath + ' middleware')
@@ -272,18 +251,18 @@ export default class ControllerPlugin extends Plugin {
        * beforeCallRoute event.
        * @event @midgar/controller:beforeCallRoute
        */
-      await this.mid.emit('@midgar/controller:beforeCallRoute', {route, req, res, controller, next})
+      await this.mid.emit('@midgar/controller:beforeCallRoute', { route, req, res, controller, next })
 
       // Before exec route
       await controller.beforeCallRoute(route, req, res)
 
       try {
-        let isAllow = await controller.isAllow(req, res)
+        const isAllow = await controller.isAllow(req, res)
         // If can call the route method
         if (isAllow) {
           this.mid.debug('@midgar/controller: Call route ' + routePath)
           // Exec action
-          await controller[route.action](req, res, next) 
+          await controller[route.action](req, res, next)
         } else {
           this.mid.debug('@midgar/controller: not allowed route')
           this.mid.debug(route)
@@ -296,15 +275,17 @@ export default class ControllerPlugin extends Plugin {
 
   /**
    * Default error handler
-   * @param {*} error 
-   * @param {*} res 
-   * @param {*} route 
+   * @param {*} error
+   * @param {*} res
+   * @param {*} route
    * @param {*} next
    * @private
    */
-  _error(error, res, route, next) {
+  _error (error, res, route, next) {
     this.mid.error('@midgar/controller: error in route ' + route.path)
     this.mid.error(error)
     next(error)
   }
 }
+
+export default ControllerPlugin

@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>Documentation Index</title>
+	<title>Documentation Classes</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -72,109 +72,336 @@
 		<div id="main">
 			
 
-	
-	
+	<h1 class="page-title">Classes</h1>
+<section>
 
-
-
-
-
-
-
-
-
-
-
-	
-	
-
-
-
-
-
-    <section class="readme-section">
-        <article><p><img src="https://ci.midgar.io/app/rest/builds/buildType:(id:Midgar_Controller_Build)/statusIcon" alt=""> <a href="https://sonar.midgar.io/dashboard?id=Midgar_Controller"><img src="https://sonar.midgar.io/api/project_badges/measure?project=Midgar_Controller&amp;metric=coverage" alt="Coverage"></a></p>
-<h2>@midgar/controller</h2>
-<p>Plugin <a href="https://www.npmjs.com/package/@midgar/midgar">Midgar</a> pour la gestion des controllers</p>
-<h2>Installation</h2>
-<pre class="prettyprint source lang-sh"><code>$ npm i @midgar/controller --save
-</code></pre>
-<p>Si tout c'est bien passé, un message de confirmation apparet:</p>
-<pre class="prettyprint source"><code>#midgar-cli
-@midgar/controller added to plugins.js !
-</code></pre>
-<h2>Fonctionnement</h2>
-<p>Ce plugin ajoute un dossier de plugin midgar-controllers: ./controllers/
-Il suffie d'ajouter un controller dans le dossier ./controller de votre plugin et il est automatiquement chargé au lancement de l'application.</p>
-<h2>Structure d'un controller</h2>
-<pre class="prettyprint source lang-js"><code>import { Controller } from '@midgar/controller' 
-
- // Export 
-export default {
-  // Tableau de service a injécter
-  // @see: https://www.npmjs.com/package/@midgar/service
-  dependencies: [
-    'midgar:user'
-  ],
-  // Class du contoller
-  controller: class userController extends Controller {
-    // Les dépendances sont injécté dans le contructeur
-    constructor (mid, userService) {
-      super(mid)
-      this.prefix = 'user'
-      this.userService = userService
-    }
-
-    /**
-     * Cette method rencoi un tableau contenant les routes
-     * @protected
-     */
-    getRoutes() {
-      return [
-        // Route /user/login
-        {
-          path: '/login',
-          action: 'login'
-        },
+<header>
+    
+        <h2>
         
-        // Route /user/register
-        {
-          type: 'post' // si le type n'est pas specifié, get est utilisé
-          path: '/register',
-          action: 'register'
-        }
-      ]
-    }
-
-    /**
-     * Login action 
-     */
-    login (req, res) {
-      /**
-       * La fonction getParm est ajout a l'object Request d'express
-       * Cette fonction nétoie les paramète post et get d'eventuel code html
-       * en appliquant un htmencode
-       */
-      if (this.userService.login(req.getParam('login'), req.getParam('password', false))) {
-        res.send({ success: true })
-      } else {
-        res.send({ success: false })
-      }
-    }
-
-    /**
-     * Register action 
-     */
-    register (req, res) {
-      res.send({ success: true })
-    }
-  }
-}
-</code></pre></article>
-    </section>
+        </h2>
+        
+    
+</header>
 
 
+<article>
+    <div class="container-overview">
+    
+        
 
+        
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Classes</h3>
+
+        <dl>
+            <dt><a href="Controller.html">Controller</a></dt>
+            <dd></dd>
+        
+            <dt><a href="ControllerPlugin.html">ControllerPlugin</a></dt>
+            <dd></dd>
+        </dl>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Events</h3>
+
+        <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id="event:@midgar/controller:afterLoadRoute">@midgar/controller:afterLoadRoute</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        afterLoad event.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="event:@midgar/controller:beforeCallRoute">@midgar/controller:beforeCallRoute</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        beforeCallRoute event.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="event:@midgar/controller:beforeLoad">@midgar/controller:beforeLoad</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        beforeLoadRoute event.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+</article>
+
+</section>
 
 
 

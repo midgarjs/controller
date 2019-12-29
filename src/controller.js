@@ -1,15 +1,13 @@
-/** @module Controller */
-
 /**
  * Controller Class
+ * @class
  * @abstract
  */
-export default class Controller {
-
+class Controller {
   /**
    * @param {Midgar} mid Midgar instance
    */
-	constructor (mid) {
+  constructor (mid) {
     if (this.constructor === Controller) throw new TypeError('Abstract class "Controller" cannot be instantiated directly')
 
     /**
@@ -29,7 +27,7 @@ export default class Controller {
    * Init hook
    */
   async init () {}
-  
+
   /**
    * Return route definitions
    * @return {Array}
@@ -49,9 +47,11 @@ export default class Controller {
 
   /**
    * Before call route hook
-   * @param {*} route 
+   * @param {*} route
    * @param {Request}  req Express request object
    * @param {Response} res Express responde object
    */
   async beforeCallRoute (route, req, res) {}
 }
+
+export default Controller
