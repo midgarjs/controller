@@ -24,7 +24,7 @@ class ControllerPlugin extends Plugin {
     super(...args)
 
     /**
-     * Routes dir key for plugin manager
+     * Controllers dir key
      * @type {String}
      */
     this.dirKey = DIR_KEY
@@ -107,7 +107,7 @@ class ControllerPlugin extends Plugin {
     this.mid.debug('@midgar/controller: Load controllers...')
 
     // Import controller files
-    const files = await this.mid.pm.importDir(this.dirKey, null, true)
+    const files = await this.mid.pm.importDir(this.dirKey)
 
     // List controller files
     await asyncMap(files, async file => {

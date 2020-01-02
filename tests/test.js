@@ -46,7 +46,6 @@ describe('Controller', function () {
     expect(plugin).to.be.an.instanceof(ControllerPlugin, 'Plugin is not an instance of ControllerPlugin !')
   })
 
-  
   it('controllers', async () => {
     // Do get request for test
     const res = await chai.request(mid.app).get('/test-route')
@@ -62,8 +61,6 @@ describe('Controller', function () {
 
     expect(res.body.result).to.be.equal('test-service-result', 'Invalide test route response !')
   })
-
-  
 
   it('getParam', async () => {
     const testStringValue = 'test<script type="text/javascript">alert(\'test\');</script>'

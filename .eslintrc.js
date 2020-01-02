@@ -4,6 +4,7 @@ module.exports = {
         "node": true,
         "mocha": true
     },
+    "ignorePatterns": ["docs/**/*"],
     "extends": [
         "standard",
         "eslint:recommended",
@@ -19,5 +20,6 @@ module.exports = {
     },
     "rules": {
     },
+    "parser": "babel-eslint",
     "plugins": ["sonarjs"]
 }

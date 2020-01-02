@@ -7,12 +7,12 @@
   "scripts": {
     "postinstall": "midgar add @midgar/controller",
     "preuninstall": "midgar rm @midgar/controller",
-    "build-docs": "jsdoc -c ./jsdoc.js -t ./node_modules/ink-docstrap/template ./README.md -r ./src/",
-    "test": "mocha -r esm tests/*.js --exit",
-    "coverage": "nyc -i esm --reporter=text mocha -r esm tests/*.js --exit",
-    "test:tc": "mocha --require esm tests/*.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-multi-reporters.json --exit",
-    "coverage:tc": "nyc --require esm --reporter=teamcity --reporter=lcov npm run test:tc",
-    "eslint": "eslint -f json -o reports/.eslint-report.json src/ || exit 0"
+    "build-docs": "jsdoc -c ./jsdoc.js ./README.md -t ./node_modules/ink-docstrap/template ./README.md -r ./src/",
+    "test": "mocha --require esm tests/*.js --exit",
+    "coverage": "nyc -i esm --reporter=lcov --reporter=text-summary npm run test",
+    "eslint:ci": "eslint -f json -o reports/.eslint-report.json src/ || exit 0",
+    "test:ci": "mocha --require esm tests/*.js --reporter mocha-multi-reporters --reporter-options configFile=mocha-multi-reporters.json --exit",
+    "coverage:ci": "nyc -i esm --reporter=lcov npm run test:ci"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@midgar/utils": "^1.0.0-alpha.1.5",
-    "@midgar/midgar": "^1.0.0-alpha.2.1",
+    "@midgar/midgar": "^1.0.0-alpha.2.5",
     "@midgar/service": "^1.0.0-alpha.1.1",
     "htmlencode": "^0.0.4",
     "uid-safe": "^2.1.5"
@@ -43,7 +43,6 @@
     "mocha": "^6.2.2",
     "mocha-multi-reporters": "^1.1.7",
     "mocha-sonarqube-reporter": "^1.0.1",
-    "mocha-teamcity-reporter": "^3.0.0",
     "nyc": "^15.0.0"
   },
   "author": "Metais Fabien",
