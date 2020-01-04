@@ -34,6 +34,7 @@ describe('Controller', function () {
   })
 
   afterEach(async () => {
+    // mid.pm.getPlugin('@midgar/service').plugins = {}
     await mid.stop()
     mid = null
   })
@@ -47,16 +48,40 @@ describe('Controller', function () {
   })
 
   it('controllers', async () => {
+    const app = mid.getService('mid:express').app
+
     // Do get request for test
-    const res = await chai.request(mid.app).get('/test-route')
+    let res = await chai.request(app).get('/test-route')
       .send()
 
-    expect(res.body.result).to.be.equal('test-route-response', 'Invalide test route response !')
+    expect(res.body.result).to.be.equal('test-route-response', 'Invalide /test-route response !')
+
+    // Do get request for test
+    res = await chai.request(app).get('/testroute')
+      .send()
+    expect(res.body.result).to.be.equal('testroute-result', 'Invalide /testroute response !')
+
+    res = await chai.request(app).post('/createTest').type('form')
+      .send()
+    expect(res.body.result).to.be.equal('createTest-result', 'Invalide /createTest response !')
+
+    res = await chai.request(app).post('/testPostRoute').type('form')
+      .send()
+    expect(res.body.result).to.be.equal('testPostRoute-result', 'Invalide /testPostRoute response !')
+
+    res = await chai.request(app).get('/testrewrite')
+      .send()
+    expect(res.body.result).to.be.equal('testrewrite-rw-result', 'Invalide /testrewrite response !')
+
+    res = await chai.request(app).get('/newrewrite')
+      .send()
+    expect(res.body.result).to.be.equal('newrewrite-result', 'Invalide /newrewrite response !')
   })
 
   it('service', async () => {
+    const app = mid.getService('mid:express').app
     // Do get request for test
-    const res = await chai.request(mid.app).get('/test-service-route')
+    const res = await chai.request(app).get('/test-service-route')
       .send()
 
     expect(res.body.result).to.be.equal('test-service-result', 'Invalide test route response !')
@@ -68,8 +93,9 @@ describe('Controller', function () {
       foo: 'testObject<script type="text/javascript">alert(\'test\');</script>'
     }
 
+    const app = mid.getService('mid:express').app
     // Add a post route to test getParam function
-    mid.app.post('/posttest', function (req, res) {
+    app.post('/posttest', function (req, res) {
       const testString = req.getParam('testString')
       const testStringClear = req.getParam('testString', false)
       const testObject = req.getParam('testObject')
@@ -84,7 +110,7 @@ describe('Controller', function () {
     })
 
     // Do post request for test
-    const chaiRes = await chai.request(mid.app).post('/posttest')
+    const chaiRes = await chai.request(app).post('/posttest')
       .type('form')
       .send({
         testString: testStringValue,

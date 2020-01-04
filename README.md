@@ -41,49 +41,35 @@ class UserController extends Controller {
     this.userService = userService
   }
 
-  /**
-   * Cette method rencoi un tableau contenant les routes
-   * @protected
-   */
-  getRoutes() {
-    return [
-      // Route /user/login
+  init () {
+    this.addRoutes([
+      // Route /user/users/42
       {
-        path: '/login',
-        action: 'login'
-      },
-      
-      // Route /user/register
-      {
-        type: 'post' // si le type n'est pas specifié, get est utilisé
-        path: '/register',
-        action: 'register'
+        path: '/users/:id',
+        action: (...args) => this.users(...args)
       }
-    ]
+    ])
   }
 
-  /**
-   * Login action 
-   */
-  login (req, res) {
+  // /users/login
+  async loginRoute (req, res) {
     /**
      * La fonction getParm est ajout a l'object Request d'express
      * Cette fonction nétoie les paramète post et get d'eventuel code html
      * en appliquant un htmencode
      */
-    if (this.userService.login(req.getParam('login'), req.getParam('password', false))) {
+    if (await this.userService.login(req.getParam('login'), req.getParam('password', false))) {
       res.send({ success: true })
     } else {
       res.send({ success: false })
     }
   }
+  
+  // /user/register route
+  registerPostRoute (req, res) {}
 
-  /**
-   * Register action 
-   */
-  register (req, res) {
-    res.send({ success: true })
-  }
+  //user/users/:id
+  users (req, res) {}
 }
 
 export default {
@@ -91,3 +77,4 @@ export default {
   controller: UserController
 }
 ```
+Les methodes terminant par Route, GetRoute, PostRoute, AllRoute sont automatiquement transformer en routes.

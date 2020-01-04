@@ -3,7 +3,7 @@
  * Midgar Test service
  */
 class TestService {
-  getResult() {
+  getResult () {
     return 'test-service-result'
   }
 }

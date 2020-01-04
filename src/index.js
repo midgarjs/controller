@@ -4,7 +4,7 @@ import { Plugin } from '@midgar/midgar'
 import { asyncMap } from '@midgar/utils'
 export { default as Controller } from './controller'
 
-export const DIR_KEY = 'midgar-contoller'
+export const DIR_KEY = 'midgar-controllers'
 
 /**
  * Test if func is a class
@@ -28,6 +28,12 @@ class ControllerPlugin extends Plugin {
      * @type {String}
      */
     this.dirKey = DIR_KEY
+
+    /**
+     * Express app
+     * @type {Express|null}
+     */
+    this.app = null
   }
 
   /**
@@ -38,8 +44,10 @@ class ControllerPlugin extends Plugin {
     // Add controllers plugin dir to plugin manager
     this.pm.addPluginDir(this.dirKey, 'controllers')
 
-    // Bind @midgar/midgar:initHttpServer event for add route to express
-    this.mid.on('@midgar/midgar:initHttpServer', () => {
+    // Bind @midgar/express:afterInit event for add route to express
+    this.mid.on('@midgar/express:afterInit', (expressService) => {
+      this.app = expressService.app
+
       this._bindGetParm()
       return this._loadControllers()
     })
@@ -49,7 +57,7 @@ class ControllerPlugin extends Plugin {
     /**
      * Add a function on request to get post and get parameters with html encode
      */
-    this.mid.app.use((req, res, next) => {
+    this.app.use((req, res, next) => {
       // Set Midgar intance on request object
       req.midgar = this
       // add method to get clean request param
@@ -206,17 +214,9 @@ class ControllerPlugin extends Plugin {
       if (!route.method) { route.method = 'get' }
 
       // Check route définition
-      if (!route.action) {
-        throw new Error('@midgar/controller: route have no action action in ' + controller.path + ' !')
-      }
+      if (!route.action) throw new Error(`@midgar/controller: Route have no action in file: ${controller.path} !`)
 
-      if (!route.path) {
-        throw new Error('@midgar/controller: route have no action action in ' + controller.path + ' !')
-      }
-
-      if (!controller[route.action]) {
-        throw new Error('@midgar/controller: route action (' + route.action + ') not exist for route ' + route.path + ' !')
-      }
+      if (!route.path) throw new Error(`@midgar/controller: Route have no path in file: ${controller.path} !`)
 
       // Bind router instance on method
       // controller.action = controller[route.action].bind(controller)
@@ -238,13 +238,13 @@ class ControllerPlugin extends Plugin {
     if (controller.prefix) {
       routePath = controller.prefix + route.path
     } else {
-      routePath = route.path
+      routePath = route.path.charAt(0) !== '/' ? '/' + route.path : route.path
     }
 
     this.mid.debug('@midgar/controller: add route ' + routePath + '.')
     // Decalare the route to express
     // Route.type = get | post ...
-    this.mid.app[route.method](routePath, async (req, res, next) => {
+    this.app[route.method](routePath, async (req, res, next) => {
       this.mid.debug('@midgar/controller: route ' + routePath + ' middleware')
       route.isAllow = true
       /**
@@ -262,7 +262,7 @@ class ControllerPlugin extends Plugin {
         if (isAllow) {
           this.mid.debug('@midgar/controller: Call route ' + routePath)
           // Exec action
-          await controller[route.action](req, res, next)
+          await route.action(req, res, next)
         } else {
           this.mid.debug('@midgar/controller: not allowed route')
           this.mid.debug(route)

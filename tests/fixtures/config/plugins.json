@@ -3,4 +3,7 @@
   "path": "../../.."
 }, 
 "@midgar/service": true,
-"test": true }
+"@midgar/express": true,
+"test": true,
+"rw-test": true 
+}
