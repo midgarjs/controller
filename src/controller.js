@@ -47,7 +47,7 @@ class Controller {
 
   addRoutes (routes) {
     if (!Array.isArray(routes)) throw new TypeError('@midgar/controller: Invalid routes type !')
-    routes.map(route => {
+    for (const route of routes) {
       try {
         this._checkRoute(route)
         this.routes.push(route)
@@ -55,7 +55,7 @@ class Controller {
         this.mid.error(error)
         this.mid.debug(route)
       }
-    })
+    }
   }
 
   addRoute (route) {
@@ -114,7 +114,9 @@ class Controller {
       this.routes.push({
         method,
         path,
-        action: (...args) => this[propertyName](...args)
+        action: (...args) => {
+          return this[propertyName](...args)
+        }
       })
     }
   }
