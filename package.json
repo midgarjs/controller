@@ -1,6 +1,6 @@
 {
   "name": "@midgar/controller",
-  "version": "1.0.0-alpha.1.1",
+  "version": "1.0.0-alpha.1.2",
   "description": "A Migdar plugin to load controller",
   "main": "src/index.js",
   "module": "true",
@@ -20,9 +20,8 @@
   },
   "dependencies": {
     "@midgar/utils": "^1.0.0-alpha.1.5",
-    "@midgar/midgar": "^1.0.0-alpha.3.0",
-    "@midgar/service": "^1.0.0-alpha.1.3",
-    "@midgar/express": "^1.0.0-alpha.1.0",
+    "@midgar/midgar": "^1.0.0-alpha.3.1",
+    "@midgar/express": "^1.0.0-alpha.1.1",
     "htmlencode": "^0.0.4",
     "uid-safe": "^2.1.5"
   },
@@ -45,6 +44,12 @@
     "mocha-sonarqube-reporter": "^1.0.1",
     "nyc": "^15.0.0"
   },
+  "keywords": [
+    "midgar",
+    "mvc",
+    "mvcs",
+    "controller"
+  ],
   "author": "Metais Fabien",
   "license": "MIT"
 }

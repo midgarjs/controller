@@ -133,23 +133,23 @@
   resolved "https://registry.yarnpkg.com/@istanbuljs/schema/-/schema-0.1.2.tgz#26520bf09abe4a5644cd5414e37125a8954241dd"
   integrity sha512-tsAQNx32a8CoFhjhijUIhI4kccIAgmGhy8LZMZgGfmXcpMbPRUqn5LWmgRttILi6yeGmBJd2xsPkFMs0PzgPCw==
 
-"@midgar/express@^1.0.0-alpha.1.0":
-  version "1.0.0-alpha.1.0"
-  resolved "https://registry.yarnpkg.com/@midgar/express/-/express-1.0.0-alpha.1.0.tgz#7b3fc41b1270494c0197d7135218d975bac5f387"
-  integrity sha512-LQNQjiTkOpDnkYNOBxrVnZ2P61GT4aOoJ6ANnz4TGrfBPA3ZcS+FQT18xn9h2MyJYEFN9QNGSWB4UA/+17OBKA==
+"@midgar/express@^1.0.0-alpha.1.1":
+  version "1.0.0-alpha.1.1"
+  resolved "https://registry.yarnpkg.com/@midgar/express/-/express-1.0.0-alpha.1.1.tgz#6afe65e1b931523a2a8a0286504ff27070e303fd"
+  integrity sha512-h26P4sYl1Ij7wyEQF1rn1Tb2ohqkcf/1AS6j41dJEMb6ERw/86Y/q90wJBDIWLmIrVYCXu6f7wwY2iY1Y40uOw==
   dependencies:
     "@midgar/midgar" "^1.0.0-alpha.3.0"
-    "@midgar/service" "1.0.0-alpha.1.3"
+    "@midgar/service" "1.0.0-alpha.1.4"
     "@midgar/utils" "^1.0.0-alpha.1.5"
     body-parser "^1.19.0"
     express "^4.17.1"
     helmet "^3.21.2"
     uid-safe "^2.1.5"
 
-"@midgar/midgar@^1.0.0-alpha.3.0":
-  version "1.0.0-alpha.3.0"
-  resolved "https://registry.yarnpkg.com/@midgar/midgar/-/midgar-1.0.0-alpha.3.0.tgz#cd1ccce7efc2814c571a1dd39b0f04d39dca738e"
-  integrity sha512-6+U4ylD4Pa/YGyXrZazwS6qBTDTvLlW6OC6ODej/lHGgIlg50RpWFQ82PHM0BnmK5hP76NStueZ06l7Xayxp8g==
+"@midgar/midgar@^1.0.0-alpha.3.0", "@midgar/midgar@^1.0.0-alpha.3.1":
+  version "1.0.0-alpha.3.1"
+  resolved "https://registry.yarnpkg.com/@midgar/midgar/-/midgar-1.0.0-alpha.3.1.tgz#440475962baa8589158cf161f3ce39daf184e695"
+  integrity sha512-Ke448xF0FB83igi9zZiZST+IrXUb+BdgrZ/KU7f8F2FnBBbq5dR1iJMVc/RPBGUWrMaopfdaeabIx6y8rT1CmQ==
   dependencies:
     "@midgar/utils" "^1.0.0-alpha.1.5"
     colors "^1.4.0"
@@ -160,10 +160,10 @@
     winston "^3.2.1"
     winston-daily-rotate-file "^4.4.1"
 
-"@midgar/service@1.0.0-alpha.1.3", "@midgar/service@^1.0.0-alpha.1.3":
-  version "1.0.0-alpha.1.3"
-  resolved "https://registry.yarnpkg.com/@midgar/service/-/service-1.0.0-alpha.1.3.tgz#b10664686971114719806cbda9e35fe45688f208"
-  integrity sha512-hKaYa4u0N1wu82SCAB93Z3Is1yHRUCC74/Ehz6iWwJknplPMf5mVieXhCjtU0N5/kg1SMpq6mYw3uIbIinsRqg==
+"@midgar/service@1.0.0-alpha.1.4":
+  version "1.0.0-alpha.1.4"
+  resolved "https://registry.yarnpkg.com/@midgar/service/-/service-1.0.0-alpha.1.4.tgz#6dede7023f559d9a6f5dc3961722d980eb02903b"
+  integrity sha512-wYnT8LBhJZjr8TU1Dn0DEoZxKMERg+FPWgXuTTvOixj5/w9Mcyb5HDyFWSwVNHyvYEy2TELTGgip72XuCOMF0g==
   dependencies:
     "@midgar/midgar" "^1.0.0-alpha.3.0"
     "@midgar/utils" "^1.0.0-alpha.1.5"
