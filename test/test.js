@@ -50,32 +50,22 @@ describe('Controller', function () {
   it('controllers', async () => {
     const app = mid.getService('mid:express').app
 
-    // Do get request for test
-    let res = await chai.request(app).get('/test-route')
-      .send()
+    // Do get requests for test
+    let res = await chai.request(app).get('/test').send()
+    expect(res.body.result).to.be.equal('test-result', 'Invalide /test response !')
 
-    expect(res.body.result).to.be.equal('test-route-response', 'Invalide /test-route response !')
+    res = await chai.request(app).get('/test/test-route').send()
+    expect(res.body.result).to.be.equal('test-route-result', 'Invalide /test/test-route response !')
 
-    // Do get request for test
-    res = await chai.request(app).get('/testroute')
-      .send()
-    expect(res.body.result).to.be.equal('testroute-result', 'Invalide /testroute response !')
+    // Test rewrite route
+    res = await chai.request(app).get('/test-rewrite').send()
+    expect(res.body.result).to.be.equal('test-rewrited-result', 'Invalide /test-rewrite response !')
 
-    res = await chai.request(app).post('/createTest').type('form')
-      .send()
-    expect(res.body.result).to.be.equal('createTest-result', 'Invalide /createTest response !')
+    res = await chai.request(app).get('/otherTest').send()
+    expect(res.body.result).to.be.equal('other-test-result', 'Invalide /otherTest response !')
 
-    res = await chai.request(app).post('/testPostRoute').type('form')
-      .send()
-    expect(res.body.result).to.be.equal('testPostRoute-result', 'Invalide /testPostRoute response !')
-
-    res = await chai.request(app).get('/testrewrite')
-      .send()
-    expect(res.body.result).to.be.equal('testrewrite-rw-result', 'Invalide /testrewrite response !')
-
-    res = await chai.request(app).get('/newrewrite')
-      .send()
-    expect(res.body.result).to.be.equal('newrewrite-result', 'Invalide /newrewrite response !')
+    res = await chai.request(app).get('/otherTest/test').send()
+    expect(res.body.result).to.be.equal('other-test-test-result', 'Invalide /otherTest/test response !')
   })
 
   it('service', async () => {

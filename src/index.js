@@ -4,7 +4,7 @@ import { Plugin } from '@midgar/midgar'
 import { asyncMap } from '@midgar/utils'
 export { default as Controller } from './controller'
 
-export const DIR_KEY = 'midgar-controllers'
+export const MODULE_TYPE_KEY = 'midgar-controller'
 
 /**
  * Test if func is a class
@@ -17,17 +17,17 @@ function isClass (func) {
 }
 
 /**
- * Midgar Controller plugin
+ * Controller plugin class
  */
 class ControllerPlugin extends Plugin {
   constructor (...args) {
     super(...args)
 
     /**
-     * Controllers dir key
-     * @type {String}
+     * Controllers module type key
+     * @type {string}
      */
-    this.dirKey = DIR_KEY
+    this.moduleTypeKey = MODULE_TYPE_KEY
 
     /**
      * Express app
@@ -41,8 +41,8 @@ class ControllerPlugin extends Plugin {
    * Define controllers directory and bind event
    */
   async init () {
-    // Add controllers plugin dir to plugin manager
-    this.pm.addPluginDir(this.dirKey, 'controllers')
+    // Add controller module type to plugin manager
+    this.pm.addModuleType(this.moduleTypeKey, 'controllers')
 
     // Bind @midgar/express:afterInit event for add route to express
     this.mid.on('@midgar/express:afterInit', (expressService) => {
@@ -53,6 +53,10 @@ class ControllerPlugin extends Plugin {
     })
   }
 
+  /**
+   * Add a midlleware to set getParam method to request object
+   * @private
+   */
   _bindGetParm () {
     /**
      * Add a function on request to get post and get parameters with html encode
@@ -82,7 +86,7 @@ class ControllerPlugin extends Plugin {
 
   /**
    * Remove html from Onkect and String
-   * @param {*} value
+   * @param {any} value
    * @private
    */
   _cleanParam (value) {
@@ -101,8 +105,7 @@ class ControllerPlugin extends Plugin {
   }
 
   /**
-   * initHttpServer hook
-   * Load plugin controller files
+   * Import controller modules and add routes to express
    * @private
    */
   async _loadControllers () {
@@ -115,7 +118,7 @@ class ControllerPlugin extends Plugin {
     this.mid.debug('@midgar/controller: Load controllers...')
 
     // Import controller files
-    const files = await this.mid.pm.importDir(this.dirKey)
+    const files = await this.mid.pm.importModules(this.moduleTypeKey)
 
     // List controller files
     await asyncMap(files, async file => {
@@ -136,50 +139,50 @@ class ControllerPlugin extends Plugin {
   }
 
   /**
-   * Load controller file and add routes to express
+   * Load controller module file and add routes to express
    *
-   * @param {Object} controllerFile Object of a file imported with pm.inportDir
+   * @param {object} controllerFile Object of a file imported with pm.inportDir
    * @private
    */
   async _loadController (controllerFile) {
     // Router class
-    const controllerExport = controllerFile.export
+    const controllerModule = controllerFile.export
 
     // If constroller is a class
-    if (isClass(controllerExport)) {
-      await this._loadClass(controllerExport, [this.mid])
+    if (isClass(controllerModule)) {
+      await this._loadClass(controllerModule, [this.mid])
       // If constroller is an Object
-    } else if (typeof controllerExport === 'object') {
+    } else if (typeof controllerModule === 'object') {
       await this._loadObject(controllerFile)
     } else {
-      throw new TypeError('@midgar/controller: Invalid controller Type: ' + controllerFile.path)
+      throw new TypeError(`@midgar/controller: Invalid controller module type in module:  ${controllerFile.path} !`)
     }
   }
 
   /**
-   * Load controller Object
+   * Load controller controller module Object
    *
-   * @param {Object} controllerFile Object of a file imported with pm.inportDir
+   * @param {object} controllerFile Object of a file imported with pm.inportDir
    * @private
    */
   async _loadObject (controllerFile) {
     // Router class
-    const controllerExport = controllerFile.export
+    const controllerModule = controllerFile.export
     // Check controller def
-    if (controllerExport.controller === undefined) { throw new Error('@midgar/controller: missing controller entry in file: ' + controllerFile.path) }
-    if (!isClass(controllerExport.controller)) { throw new TypeError('@midgar/controller: invalid controller entry type in file: ' + controllerFile.path) }
+    if (controllerModule.controller === undefined) throw new Error(`@midgar/controller: missing controller entry in module:  ${controllerFile.path} !`)
+    if (!isClass(controllerModule.controller)) throw new TypeError(`@midgar/controller: invalid controller entry type in module: ${controllerFile.path} !`)
 
-    if (controllerExport.dependencies !== undefined) {
+    if (controllerModule.dependencies !== undefined) {
       const args = [this.mid]
 
-      if (!Array.isArray(controllerExport.dependencies)) {
-        this.mid.warn('@midgar/controller: invalid dependencies entry type in file: ' + controllerFile.path)
-      } else if (controllerExport.dependencies.length) {
-        for (const dependency of controllerExport.dependencies) {
+      if (!Array.isArray(controllerModule.dependencies)) {
+        this.mid.warn(`@midgar/controller: invalid dependencies entry type in module: ${controllerFile.path} !`)
+      } else if (controllerModule.dependencies.length) {
+        for (const dependency of controllerModule.dependencies) {
           args.push(this.mid.getService(dependency))
         }
       }
-      await this._loadClass(controllerExport.controller, args)
+      await this._loadClass(controllerModule.controller, args)
     }
   }
 
@@ -209,17 +212,15 @@ class ControllerPlugin extends Plugin {
    * @private
    */
   async _loadRoutes (routes, controller) {
+    if (controller.prefix && controller.prefix === '/') throw new Error(`@midgar/controller: Invalid controller prefix value in module: ${controller.path} !`)
+
     // List routes
     await asyncMap(routes, async route => {
       if (!route.method) { route.method = 'get' }
 
       // Check route définition
-      if (!route.action) throw new Error(`@midgar/controller: Route have no action in file: ${controller.path} !`)
-
-      if (!route.path) throw new Error(`@midgar/controller: Route have no path in file: ${controller.path} !`)
-
-      // Bind router instance on method
-      // controller.action = controller[route.action].bind(controller)
+      if (!route.action) throw new Error(`@midgar/controller: Route have no action in module: ${controller.path} !`)
+      if (!route.path) throw new Error(`@midgar/controller: Route have no path in module: ${controller.path} !`)
 
       await this._addRoute(route, controller)
     })
@@ -228,17 +229,25 @@ class ControllerPlugin extends Plugin {
   /**
    * Add route to express
    *
-   * @param {Object}     route      Route definition
+   * @param {object}     route      Route definition
    * @param {Controller} controller Controller instance
    * @private
    */
   async _addRoute (route, controller) {
-    let routePath = null
-    // If router have prefix had it to the path
+    // Force / at first char
+    let routePath = route.path.charAt(0) !== '/' ? '/' + route.path : route.path
+    // remove last / or empty if routePath === '/'
+    if (routePath.charAt(routePath.length - 1) === '/') routePath = routePath.slice(0, -1)
+    // If controller have prefix had it to the path
     if (controller.prefix) {
-      routePath = controller.prefix + route.path
-    } else {
-      routePath = route.path.charAt(0) !== '/' ? '/' + route.path : route.path
+      let prefix = controller.prefix
+
+      // Force / at first char
+      if (prefix.charAt(0) !== '/') prefix = '/' + prefix
+
+      // remove last /
+      if (prefix.charAt(prefix.length - 1) === '/') prefix = prefix.slice(0, -1)
+      routePath = prefix + routePath
     }
 
     this.mid.debug('@midgar/controller: add route ' + routePath + '.')

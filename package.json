@@ -8,10 +8,10 @@
     "postinstall": "midgar add @midgar/controller",
     "preuninstall": "midgar rm @midgar/controller",
     "build-docs": "jsdoc -c ./jsdoc.js ./README.md -t ./node_modules/ink-docstrap/template ./README.md -r ./src/",
-    "test": "mocha --require esm tests/*.js --exit",
+    "test": "mocha --require esm test/*.js --exit",
     "coverage": "nyc -i esm --reporter=lcov --reporter=text-summary npm run test",
     "eslint:ci": "eslint -f json -o reports/.eslint-report.json src/ || exit 0",
-    "test:ci": "mocha --require esm tests/*.js --reportermocha-sonarqube-reporter --reporter-options output=reports/xunit.xml --exit",
+    "test:ci": "mocha --require esm test/*.js --reportermocha-sonarqube-reporter --reporter-options output=reports/xunit.xml --exit",
     "coverage:ci": "nyc -i esm --reporter=lcov npm run test:ci"
   },
   "repository": {
@@ -19,9 +19,9 @@
     "url": "git+https://github.com/midgarjs/controller.git"
   },
   "dependencies": {
+    "@midgar/express": "^1.0.0-alpha.1.6",
+    "@midgar/midgar": "^1.0.0-alpha.4.4",
     "@midgar/utils": "^1.0.0-alpha.1.5",
-    "@midgar/midgar": "^1.0.0-alpha.3.1",
-    "@midgar/express": "^1.0.0-alpha.1.1",
     "htmlencode": "^0.0.4",
     "uid-safe": "^2.1.5"
   },
@@ -32,7 +32,7 @@
     "dirty-chai": "^2.0.1",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-import": "^2.20.0",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-sonarjs": "^0.5.0",
@@ -40,7 +40,7 @@
     "esm": "^3.2.25",
     "ink-docstrap": "^1.3.2",
     "jsdoc": "^3.6.3",
-    "mocha": "^6.2.2",
+    "mocha": "^7.0.0",
     "mocha-sonarqube-reporter": "^1.0.1",
     "nyc": "^15.0.0"
   },

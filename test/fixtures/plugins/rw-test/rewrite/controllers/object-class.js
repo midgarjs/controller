@@ -5,12 +5,8 @@ export default {
     'test:test'
   ],
   controller: class TestObjectRwController extends TestObjectController {
-    testrewriteRoute (req, res) {
-      res.send({ result: 'testrewrite-rw-result' })
-    }
-
-    newrewriteRoute (req, res) {
-      res.send({ result: 'newrewrite-result' })
+    testRewrite (req, res) {
+      res.send({ result: 'test-rewrited-result' })
     }
   }
 }

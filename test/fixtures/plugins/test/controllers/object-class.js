@@ -6,30 +6,22 @@ class TestObjectController extends Controller {
   }
 
   async init () {
-    this.addRoute({
+    this.addRoutes([{
       path: '/test-service-route',
       action: (...args) => this.test(...args)
-    })
+    },
+    {
+      path: '/test-rewrite',
+      action: (...args) => this.testRewrite(...args)
+    }])
   }
 
   test (req, res) {
     res.send({ result: this.testService.getResult() })
   }
 
-  testrouteRoute (req, res) {
-    res.send({ result: 'testroute-result' })
-  }
-
-  createTestPostRoute (req, res) {
-    res.send({ result: 'createTest-result' })
-  }
-
-  testPostRoutePostRoute (req, res) {
-    res.send({ result: 'testPostRoute-result' })
-  }
-
-  testrewriteRoute (req, res) {
-    res.send({ result: 'testrewrite-result' })
+  testRewrite (req, res) {
+    res.send({ result: 'test-rewrite-result' })
   }
 }
 

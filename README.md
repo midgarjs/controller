@@ -1,5 +1,5 @@
 [![Build Status](https://drone.midgar.io/api/badges/Midgar/controller/status.svg)](https://drone.midgar.io/Midgar/controller)
-[![Coverage](https://sonar.midgar.io/api/project_badges/measure?project=Midgar%3Acontroller&metric=coverage)](https://sonar.midgar.io/dashboard?id=Midgar%3Acontroller)
+[![Coverage](https://sonar.midgar.io/api/project_badges/measure?project=midgar-controller&metric=coverage)](https://sonar.midgar.io/dashboard?id=midgar-controller)
 
 
 ## @midgar/controller
@@ -9,19 +9,19 @@ Plugin [Midgar](https://github.com/midgarjs/midgar) pour la gestion des controll
 ## Installation
 
 ```sh
-$ npm i @midgar/controller --save
+$ npm i @midgar/controller
 ```
 
 Si tout s'est bien passé, un message de confirmation s'affiche:
 ```sh
 #midgar-cli
-@midgar/controller added to plugins.js !
+@midgar/controller added to plugins.json !
 ```
 
 ## Fonctionnement
-Ce plugin ajoute un dossier de plugin **midgar-controllers**: ./controllers/
+Ce plugin ajoute un type de module **midgar-controller** dans le dossier ./controllers/
 
-Il suffit d'ajouter un controller dans le dossier ./controller de votre plugin et il est automatiquement chargé au lancement de l'application.
+Il suffit d'ajouter un controller dans le dossier ./controllers de votre plugin pour qu'il soit automatiquement importé au lancement de l'application et injecté dans express.
 
 ## Exemple de controller
 
@@ -29,10 +29,11 @@ Il suffit d'ajouter un controller dans le dossier ./controller de votre plugin e
 import { Controller } from '@midgar/controller' 
 
 // Tableau de service a injécter
-// @see: https://www.npmjs.com/package/@midgar/service
+// @see: https://github.com/midgarjs/service
 const dependencies = [
   'midgar:user'
 ]
+
 class UserController extends Controller {
   // Les dépendances sont injécté dans le contructeur
   constructor (mid, userService) {
@@ -41,35 +42,49 @@ class UserController extends Controller {
     this.userService = userService
   }
 
+  /**
+   * Cette méthod est appelé automatiquement
+   * lors de l'instanciation du controller.
+   */
   init () {
     this.addRoutes([
-      // Route /user/users/42
       {
-        path: '/users/:id',
+        path: 'login',
+        action: (...args) => this.login(...args)
+      },      
+      {
+        method: 'post',
+        path: 'login',
+        action: (...args) => this.loginPost(...args)
+      },
+      {
+        path: 'register',
+        action: (...args) => this.register(...args)
+      },
+      {
+        path: '/',
         action: (...args) => this.users(...args)
       }
     ])
   }
 
-  // /users/login
-  async loginRoute (req, res) {
-    /**
-     * La fonction getParm est ajout a l'object Request d'express
-     * Cette fonction nétoie les paramète post et get d'eventuel code html
-     * en appliquant un htmencode
-     */
+  // GET /user/login route
+  async login (req, res) {
     if (await this.userService.login(req.getParam('login'), req.getParam('password', false))) {
       res.send({ success: true })
     } else {
       res.send({ success: false })
     }
   }
-  
-  // /user/register route
-  registerPostRoute (req, res) {}
 
-  //user/users/:id
-  users (req, res) {}
+  // POST /user/login route
+  loginPost (req, res) {}
+  
+  // GET /user/register route
+  register (req, res) {}
+
+  // GET /user route
+  user (req, res) {}
 }
 
 export default {

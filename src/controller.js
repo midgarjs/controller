@@ -28,9 +28,6 @@ class Controller {
      */
     this.routes = []
 
-    // Set routes from class methods name
-    this._processPropertiesRoutes()
-
     this._methods = ['get', 'post', 'all']
   }
 
@@ -74,7 +71,7 @@ class Controller {
   /**
    * Return if the routes in controller are allowed
    * Used for check route permission
-   * @return {Boolean}
+   * @return {boolean}
    */
   async isAllow () {
     return true
@@ -87,52 +84,6 @@ class Controller {
    * @param {Response} res Express responde object
    */
   async beforeCallRoute (route, req, res) {}
-
-  /**
-   * Set routes from class methods name
-   * @private
-   */
-  _processPropertiesRoutes () {
-    for (const propertyName of this._getPropertyNames()) {
-      // const match = (/^((?:(?!Post).)*)(Post)?Route$/i).exec(propertyName)
-
-      // Check if property end by Route
-      const match = (/^(.*)Route$/i).exec(propertyName)
-      if (!match) continue
-
-      let method = 'get'
-      if (!match[1]) throw new Error('regex not ok')
-      let path = match[1]
-
-      // Check if route path end by Post|Get|All
-      const matchMethod = (/^(.*)(Post|Get|All)$/i).exec(path)
-      if (matchMethod) {
-        path = matchMethod[1]
-        method = matchMethod[2].toLocaleLowerCase()
-      }
-
-      this.routes.push({
-        method,
-        path,
-        action: (...args) => {
-          return this[propertyName](...args)
-        }
-      })
-    }
-  }
-
-  /**
-   * Return all object properties name
-   */
-  _getPropertyNames () {
-    const methods = new Set()
-    let obj = this
-    while ((obj = Reflect.getPrototypeOf(obj))) {
-      const keys = Reflect.ownKeys(obj)
-      keys.forEach((k) => methods.add(k))
-    }
-    return methods
-  }
 }
 
 export default Controller

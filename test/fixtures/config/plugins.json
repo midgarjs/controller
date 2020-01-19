@@ -4,6 +4,6 @@
 }, 
 "@midgar/service": true,
 "@midgar/express": true,
-"test": true,
-"rw-test": true 
+"test": { "local": true },
+"rw-test": { "local": true } 
 }
