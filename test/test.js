@@ -4,12 +4,13 @@ import chaiHttp from 'chai-http'
 import dirtyChai from 'dirty-chai'
 import path from 'path'
 import { htmlEncode } from 'htmlencode'
-import ControllerPlugin from '../src/index'
+import ControllerPlugin, { Controller } from '..'
 
 /**
  * @type {Midgar}
  */
 import Midgar from '@midgar/midgar'
+import TestClassController from './fixtures/plugins/test/controllers/class'
 
 // fix for TypeError: describe is not a function with mocha-teamcity-reporter
 const { describe, it } = mocha
@@ -40,14 +41,17 @@ describe('Controller', function () {
   })
 
   /**
-   * Test if the plugin id load
+   * Test if the plugin is load
    */
-  it('plugin is load', async () => {
+  it('plugin', async () => {
     const plugin = mid.pm.getPlugin('@midgar/controller')
     expect(plugin).to.be.an.instanceof(ControllerPlugin, 'Plugin is not an instance of ControllerPlugin !')
   })
 
-  it('controllers', async () => {
+  /**
+   * Test express routes
+   */
+  it('Express routes', async () => {
     const app = mid.getService('mid:express').app
 
     // Do get requests for test
@@ -66,6 +70,41 @@ describe('Controller', function () {
 
     res = await chai.request(app).get('/otherTest/test').send()
     expect(res.body.result).to.be.equal('other-test-test-result', 'Invalide /otherTest/test response !')
+  })
+
+  /**
+   * Test controller class
+   */
+  it('Controller', async () => {
+    // Test Instance abstract controller
+    expect(function () { new Controller() }).to.throw(TypeError, '@midgar/controller: Abstract class "Controller" cannot be instantiated directly.')
+
+    const controller = new TestClassController(mid)
+
+    // addRoutes()
+    expect(function () { controller.addRoutes({}) }).to.throw(TypeError, '@midgar/controller: Invalid routes type !')
+
+    // addRoute()
+    expect(function () { controller.addRoute('str') }).to.throw(TypeError, '@midgar/controller: Invalid route type !')
+    expect(function () { controller.addRoute({}) }).to.throw(Error, '@midgar/controller: Invalid route, path is not defined !')
+    expect(function () { controller.addRoute({ path: null }) }).to.throw(Error, '@midgar/controller: Invalid route path type !')
+    expect(function () { controller.addRoute({ path: 22 }) }).to.throw(Error, '@midgar/controller: Invalid route path type !')
+    expect(function () { controller.addRoute({ path: '' }) }).to.throw(Error, '@midgar/controller: Invalid route path !')
+    expect(function () { controller.addRoute({ path: 'test' }) }).to.throw(Error, 'Invalid route, action is not defined !')
+    expect(function () { controller.addRoute({ path: 'test', action: {} }) }).to.throw(Error, '@midgar/controller: Invalid route action type !')
+
+    // init()
+    expect(controller.init).to.not.be.undefined('Missing init property !')
+    expect(controller.init).to.be.a('function', 'Invalid init property type !')
+
+    // allow()
+    expect(controller.isAllow).to.not.be.undefined('Missing allow property !')
+    expect(controller.isAllow).to.be.a('function', 'Invalid allow property type !')
+    expect(await controller.isAllow()).to.be.true('Invalid allow() result !')
+
+    // beforeCallRoute()
+    expect(controller.beforeCallRoute).to.not.be.undefined('Missing beforeCallRoute property !')
+    expect(controller.beforeCallRoute).to.be.a('function', 'Invalid beforeCallRoute property type !')
   })
 
   it('service', async () => {

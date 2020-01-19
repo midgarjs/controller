@@ -1,4 +1,11 @@
 /**
+ * @typedef {Object} Route
+ * @property {string|RegExp|Array} path   Express route path
+ * @property {string}              method Http method
+ * @property {function}            action Route callback
+ */
+
+/**
  * Controller Class
  * @class
  * @abstract
@@ -8,7 +15,7 @@ class Controller {
    * @param {Midgar} mid Midgar instance
    */
   constructor (mid) {
-    if (this.constructor === Controller) throw new TypeError('@midgar/controller: Abstract class "Controller" cannot be instantiated directly')
+    if (this.constructor === Controller) throw new TypeError('@midgar/controller: Abstract class "Controller" cannot be instantiated directly.')
 
     /**
      * Midgar instance
@@ -34,9 +41,7 @@ class Controller {
   /**
    * Init hook
    */
-  async init () {
-
-  }
+  async init () {}
 
   getRoutes () {
     return this.routes
@@ -60,10 +65,25 @@ class Controller {
     this.routes.push(route)
   }
 
+  /**
+   * Check route object
+   *
+   * @param {Route} route Route object
+   * @private
+   */
   _checkRoute (route) {
-    if (typeof route !== 'object') throw new TypeError('@midgar/controller: Invalid routes type !')
+    if (typeof route !== 'object') throw new TypeError('@midgar/controller: Invalid route type !')
+    // Check path
     if (route.path === undefined) throw new Error('@midgar/controller: Invalid route, path is not defined !')
+    if (typeof route.path !== 'string' && !(route.path instanceof RegExp) &&
+      !Array.isArray(route.path)) throw new Error('@midgar/controller: Invalid route path type !')
+
+    if (!route.path) throw new Error('@midgar/controller: Invalid route path !')
+
+    // Check method
     if (route.method !== undefined && !this._methods.includes(route.method)) throw new Error('@midgar/controller: Invalid route method !')
+
+    // check action
     if (route.action === undefined) throw new Error('@midgar/controller: Invalid route, action is not defined !')
     if (typeof route.action !== 'function') throw new Error('@midgar/controller: Invalid route action type !')
   }
